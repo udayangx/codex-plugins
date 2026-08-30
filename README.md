@@ -4,11 +4,9 @@
 
 Paste into Codex:
 
-> Run `codex plugin marketplace add udayangx/codex-plugins` then `codex plugin add learn@udayan`
+> Run `codex plugin marketplace add udayangx/codex-plugins` then `codex plugin add learn@udayan`. Then copy `prompts/learn.md` from the marketplace root shown by `codex plugin list` to `~/.codex/prompts/learn.md`.
 
-Restart Codex, then invoke the skill with `$learn`.
-
-**Optional** — to also get `/learn` in the slash popup, copy [`prompts/learn.md`](prompts/learn.md) from this repo to `~/.codex/prompts/learn.md`.
+Restart Codex, then invoke the skill with `$learn` or `/learn`.
 
 ## Plugins
 
