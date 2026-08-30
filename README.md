@@ -1,38 +1,20 @@
 # Udayan's Codex Plugins
 
-A Codex plugin marketplace. Add it once and install any plugin listed here.
+## Install
 
-## Install (one prompt)
+Paste into Codex:
 
-Paste this into a Codex session:
+> Run `codex plugin marketplace add udayangx/codex-plugins` then `codex plugin add learn@udayan`
 
-> Set up the learn plugin: run `codex plugin marketplace add udayangx/codex-plugins` and then `codex plugin add learn@udayan`. Then create `~/.codex/prompts/learn.md` with exactly this content:
->
-> ```
-> ---
-> description: Draft end-of-session process learnings for review (runs the learn skill)
-> argument-hint: [optional focus area]
-> ---
->
-> Use the $learn skill: locate the installed learn plugin's skills/learn/SKILL.md and follow it exactly to draft this session's reusable process learnings for my review. Do not write any files until I approve. Focus area (may be empty): $ARGUMENTS
-> ```
->
-> Confirm the plugin shows as installed with `codex plugin list`.
+Restart Codex, then invoke the skill with `$learn`.
 
-Or run the two commands yourself:
-
-```sh
-codex plugin marketplace add udayangx/codex-plugins
-codex plugin add learn@udayan
-```
-
-The `~/.codex/prompts/learn.md` shim is optional — it makes `/learn` appear in the slash popup. The skill itself is always invocable as `$learn` in a fresh Codex session after install.
+**Optional** — to also get `/learn` in the slash popup, copy [`prompts/learn.md`](prompts/learn.md) from this repo to `~/.codex/prompts/learn.md`.
 
 ## Plugins
 
 | Plugin | What it does |
 | --- | --- |
-| `learn` | End-of-session `$learn` — replays the session and drafts reusable process learnings (sequence, scoping, and assumption errors; validated approaches; known gaps) for your review before writing to the project's `learnings.md`. |
+| `learn` | End-of-session `$learn` — drafts reusable process learnings for your review before writing to the project's `learnings.md`. |
 
 ## Updating
 
@@ -40,14 +22,6 @@ The `~/.codex/prompts/learn.md` shim is optional — it makes `/learn` appear in
 codex plugin marketplace upgrade
 ```
 
-## Repo layout
+## Adding a plugin
 
-```
-.agents/plugins/marketplace.json   # marketplace manifest (name: udayan)
-plugins/<name>/
-  .codex-plugin/plugin.json        # plugin manifest
-  skills/<name>/SKILL.md           # the skill itself
-  skills/<name>/agents/openai.yaml # Codex-facing interface + invocation policy
-```
-
-To add a new plugin: create `plugins/<name>/` following the layout above, append an entry to `marketplace.json`. Users pick it up with `codex plugin marketplace upgrade` then `codex plugin add <name>@udayan`.
+Create `plugins/<name>/` with `.codex-plugin/plugin.json` + `skills/<name>/SKILL.md` (+ optional `skills/<name>/agents/openai.yaml`), append an entry to `.agents/plugins/marketplace.json`. Users get it with `codex plugin marketplace upgrade` then `codex plugin add <name>@udayan`.
