@@ -1,12 +1,12 @@
-# GrowthX Codex Plugins
+# Udayan's Codex Plugins
 
-A Codex plugin marketplace for GrowthX builders. Add it once and install any plugin listed here.
+A Codex plugin marketplace. Add it once and install any plugin listed here.
 
 ## Install (one prompt)
 
 Paste this into a Codex session:
 
-> Set up the GrowthX learn plugin: run `codex plugin marketplace add GrowthX-Club/codex-plugins` and then `codex plugin add learn@growthx`. Then create `~/.codex/prompts/learn.md` with exactly this content:
+> Set up the learn plugin: run `codex plugin marketplace add udayangx/codex-plugins` and then `codex plugin add learn@udayan`. Then create `~/.codex/prompts/learn.md` with exactly this content:
 >
 > ```
 > ---
@@ -22,8 +22,8 @@ Paste this into a Codex session:
 Or run the two commands yourself:
 
 ```sh
-codex plugin marketplace add GrowthX-Club/codex-plugins
-codex plugin add learn@growthx
+codex plugin marketplace add udayangx/codex-plugins
+codex plugin add learn@udayan
 ```
 
 The `~/.codex/prompts/learn.md` shim is optional — it makes `/learn` appear in the slash popup. The skill itself is always invocable as `$learn` in a fresh Codex session after install.
@@ -43,11 +43,11 @@ codex plugin marketplace upgrade
 ## Repo layout
 
 ```
-.agents/plugins/marketplace.json   # marketplace manifest (name: growthx)
+.agents/plugins/marketplace.json   # marketplace manifest (name: udayan)
 plugins/<name>/
   .codex-plugin/plugin.json        # plugin manifest
   skills/<name>/SKILL.md           # the skill itself
   skills/<name>/agents/openai.yaml # Codex-facing interface + invocation policy
 ```
 
-To add a new plugin: create `plugins/<name>/` following the layout above, append an entry to `marketplace.json`, bump nothing else. Builders pick it up with `codex plugin marketplace upgrade` then `codex plugin add <name>@growthx`.
+To add a new plugin: create `plugins/<name>/` following the layout above, append an entry to `marketplace.json`. Users pick it up with `codex plugin marketplace upgrade` then `codex plugin add <name>@udayan`.
