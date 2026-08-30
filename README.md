@@ -31,13 +31,15 @@ each entry compounds. agents read `learnings.md` at the start of the next sessio
 
 ## install
 
-run the one-command installer:
+one command installs Learn for Codex, Claude Code, or any Agent Skills-compatible tool it detects:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/udayangx/codex-plugins/main/install.sh | sh
 ```
 
-or paste the manual setup into codex:
+the installer gives Codex the marketplace plugin and `/learn` prompt, installs the native skill for Claude Code, and falls back to the shared `~/.agents/skills/learn` location for other agents.
+
+for manual Codex setup, paste this into Codex:
 
 > run `codex plugin marketplace add udayangx/codex-plugins` then `codex plugin add learn@udayan`. then copy `prompts/learn.md` from the marketplace root shown by `codex plugin list` to `~/.codex/prompts/learn.md`.
 
