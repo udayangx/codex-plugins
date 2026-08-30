@@ -31,7 +31,13 @@ each entry compounds. agents read `learnings.md` at the start of the next sessio
 
 ## install
 
-paste into codex:
+run the one-command installer:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/udayangx/codex-plugins/main/install.sh | sh
+```
+
+or paste the manual setup into codex:
 
 > run `codex plugin marketplace add udayangx/codex-plugins` then `codex plugin add learn@udayan`. then copy `prompts/learn.md` from the marketplace root shown by `codex plugin list` to `~/.codex/prompts/learn.md`.
 
