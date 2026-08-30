@@ -1,0 +1,22 @@
+{
+  "name": "learn",
+  "version": "1.0.0",
+  "description": "Draft end-of-session process learnings and validated approaches for the current project's learnings.md.",
+  "author": {
+    "name": "Udayan"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Learn",
+    "shortDescription": "Draft reusable process learnings for review.",
+    "longDescription": "At the end of a working session, $learn replays what happened and drafts reusable process learnings — sequence errors, scoping errors, assumption errors, validated approaches, and known gaps — for your review before anything is written to the project's learnings.md.",
+    "developerName": "Udayan",
+    "category": "Productivity",
+    "capabilities": [
+      "End-of-session learning drafts",
+      "learnings.md maintenance",
+      "Review-before-write flow"
+    ],
+    "defaultPrompt": ["Use $learn to draft this session's reusable process learnings for my review."]
+  }
+}

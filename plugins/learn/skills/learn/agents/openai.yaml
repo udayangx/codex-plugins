@@ -1,0 +1,7 @@
+interface:
+  display_name: "Learn"
+  short_description: "Draft reusable process learnings for review"
+  default_prompt: "Use $learn to draft this session's reusable process learnings for my review."
+
+policy:
+  allow_implicit_invocation: false
