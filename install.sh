@@ -80,10 +80,24 @@ run_step() {
 }
 
 marketplace_root() {
-  codex plugin list 2>/dev/null | awk -v name="$marketplace" '
-    $0 == "Marketplace `" name "`" {
-      getline
+  codex plugin marketplace list 2>/dev/null | awk -v name="$marketplace" '
+    $1 == name {
+      $1 = ""
+      sub(/^[[:space:]]+/, "")
       print
+      exit
+    }
+  '
+}
+
+marketplace_configured_source() {
+  codex plugin marketplace list --json 2>/dev/null | awk -v name="$marketplace" '
+    $0 ~ "\"name\"[[:space:]]*:[[:space:]]*\"" name "\"" { found = 1 }
+    found && $0 ~ /"source"[[:space:]]*:/ {
+      line = $0
+      sub(/^.*"source"[[:space:]]*:[[:space:]]*"/, "", line)
+      sub(/"[,[:space:]]*$/, "", line)
+      print line
       exit
     }
   '
@@ -113,8 +127,36 @@ download_repository() {
 copy_skill() {
   source=$1
   destination=$2
-  mkdir -p "$destination"
-  cp -R "$source/." "$destination/"
+  parent=$(dirname "$destination")
+  mkdir -p "$parent"
+  stage=$(mktemp -d "$parent/.learn-stage.XXXXXX")
+  backup=''
+
+  if ! cp -R "$source/." "$stage/"; then
+    rm -rf "$stage"
+    return 1
+  fi
+
+  if [ -e "$destination" ] || [ -L "$destination" ]; then
+    backup=$(mktemp -d "$parent/.learn-backup.XXXXXX")
+    rmdir "$backup"
+    if ! mv "$destination" "$backup"; then
+      rm -rf "$stage"
+      return 1
+    fi
+  fi
+
+  if mv "$stage" "$destination"; then
+    [ -z "$backup" ] || rm -rf "$backup"
+    return 0
+  else
+    status=$?
+    rm -rf "$stage"
+    if [ -n "$backup" ] && [ -e "$backup" ]; then
+      mv "$backup" "$destination"
+    fi
+    return "$status"
+  fi
 }
 
 celebrate() {
@@ -128,8 +170,9 @@ celebrate() {
 
   printf '\n%b╭────────────────────────────────────────╮%b\n' "$accent" "$reset"
   printf '%b│%b  %b◈ Learn is ready%b                      %b│%b\n' "$accent" "$reset" "$bold" "$reset" "$accent" "$reset"
-  printf '%b│%b  Restart your agent, then run %b/learn%b.  %b│%b\n' "$accent" "$reset" "$bold" "$reset" "$accent" "$reset"
+  printf '%b│%b  Restart your agent and invoke Learn.  %b│%b\n' "$accent" "$reset" "$accent" "$reset"
   printf '%b╰────────────────────────────────────────╯%b\n\n' "$accent" "$reset"
+  printf '%b%s%b\n\n' "$muted" '  Use /learn where supported; otherwise ask your agent to use $learn.' "$reset"
 }
 
 printf '\n%b%s%b\n' "$accent$bold" '  ◈ LEARN' "$reset"
@@ -144,16 +187,17 @@ repository_root="${LEARN_SOURCE_ROOT:-}"
 if command -v codex >/dev/null 2>&1; then
   root=$(marketplace_root)
   if [ -n "$root" ]; then
+    configured_source=$(marketplace_configured_source)
+    case "$configured_source" in
+      "$marketplace_source"|"https://github.com/$marketplace_source"|"https://github.com/$marketplace_source.git"|"git@github.com:$marketplace_source.git") ;;
+      *) fail "Marketplace '$marketplace' already exists with a different source: $configured_source" ;;
+    esac
     run_step 'Refreshing the Codex marketplace' codex plugin marketplace upgrade "$marketplace"
   else
     run_step 'Adding the Codex marketplace' codex plugin marketplace add "$marketplace_source"
   fi
 
-  if codex plugin list 2>/dev/null | grep -Eq '^learn@udayan[[:space:]]+installed'; then
-    printf '  %b✓%b %s\n' "$success" "$reset" 'Codex plugin already installed'
-  else
-    run_step 'Installing the Codex plugin' codex plugin add "$plugin"
-  fi
+  run_step 'Installing or updating the Codex plugin' codex plugin add "$plugin"
 
   root=$(marketplace_root)
   [ -n "$root" ] || fail 'Codex installed the marketplace, but its root could not be found.'
@@ -177,15 +221,15 @@ skill_source="$repository_root/plugins/learn/skills/learn"
 
 if command -v claude >/dev/null 2>&1; then
   claude_destination="${CLAUDE_CONFIG_DIR:-${HOME}/.claude}/skills/learn"
+  run_step 'Preparing the Claude Code skill directory' mkdir -p "$(dirname "$claude_destination")"
   run_step 'Installing the Claude Code skill' copy_skill "$skill_source" "$claude_destination"
   installed_claude=true
 fi
 
-if [ "$installed_codex" = false ] && [ "$installed_claude" = false ]; then
-  portable_destination="${AGENTS_HOME:-${HOME}/.agents}/skills/learn"
-  run_step 'Installing the portable Agent Skill' copy_skill "$skill_source" "$portable_destination"
-  installed_portable=true
-fi
+portable_destination="${AGENTS_HOME:-${HOME}/.agents}/skills/learn"
+run_step 'Preparing the portable skill directory' mkdir -p "$(dirname "$portable_destination")"
+run_step 'Installing the portable Agent Skill' copy_skill "$skill_source" "$portable_destination"
+installed_portable=true
 
 printf '\n  %bInstalled for:%b\n' "$bold" "$reset"
 [ "$installed_codex" = false ] || printf '  %b✓%b Codex\n' "$success" "$reset"

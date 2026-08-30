@@ -31,13 +31,13 @@ each entry compounds. agents read `learnings.md` at the start of the next sessio
 
 ## install
 
-one command installs Learn for Codex, Claude Code, or any Agent Skills-compatible tool it detects:
+one command installs Learn for Codex, Claude Code, and Agent Skills-compatible tools:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/udayangx/codex-plugins/main/install.sh | sh
 ```
 
-the installer gives Codex the marketplace plugin and `/learn` prompt, installs the native skill for Claude Code, and falls back to the shared `~/.agents/skills/learn` location for other agents.
+the installer gives Codex the marketplace plugin and `/learn` prompt, installs the native skill for Claude Code when present, and always installs the portable skill at `~/.agents/skills/learn` for compatible tools such as Cursor, Gemini CLI, GitHub Copilot, and OpenCode.
 
 for manual Codex setup, paste this into Codex:
 
@@ -52,8 +52,10 @@ $learn the deploy pipeline
 
 ## updating
 
+rerun the installer to refresh every installed copy:
+
 ```sh
-codex plugin marketplace upgrade
+curl -fsSL https://raw.githubusercontent.com/udayangx/codex-plugins/main/install.sh | sh
 ```
 
 ## adding a plugin
